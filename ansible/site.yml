@@ -1,0 +1,17 @@
+---
+- hosts: all
+  # enable privilege escalation
+  become: true
+  become_user: root
+  # load ansible variables
+  vars_files:
+    - vars/vagrant.yml
+  roles:
+    - base
+    - php
+    - nginx
+    - mariadb
+    - composer
+    - nodejs
+    - redis
+    - rabbitmq

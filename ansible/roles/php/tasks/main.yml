@@ -1,0 +1,39 @@
+---
+- set_fact: version="7.0" php_path="/etc/php/7.0" php_mod_prefix="php7.0-" php_run="/var/run/php/php7.0-fpm"
+  when: php.version == 7.0
+
+- set_fact: version="5.6" php_path="/etc/php/5.6" php_mod_prefix="php5.6-" php_run="/var/run/php/php5.6-fpm"
+  when: php.version != 7.0
+
+- name: Add ppa Repository
+  apt_repository: repo="ppa:ondrej/php"
+
+- name: Update apt
+  apt: update_cache=yes cache_valid_time=86400
+
+- name: Install PHP Packages
+  apt: pkg={{ item }}
+  with_items:
+    - php{{ version }}
+    - php{{ version }}-cli
+    - php{{ version }}-fpm
+
+- name: Install PHP Extension
+  apt: pkg={{ item }}
+  with_items:
+    - php{{ version }}-xml
+    - php{{ version }}-intl
+    - php{{ version }}-mcrypt
+    - php{{ version }}-curl
+    - php{{ version }}-mbstring
+    - php{{ version }}-curl
+    - php{{ version }}-xdebug
+    - php{{ version }}-mysql
+
+- name: change default php-cli
+  command: ln -sfn /usr/bin/php{{ version }} /etc/alternatives/php
+
+- name: Ensure timezone is set in cli php.ini
+  lineinfile: dest="{{ php_path }}/cli/php.ini"
+             regexp='date.timezone ='
+             line='date.timezone = {{ base.timezone }}'

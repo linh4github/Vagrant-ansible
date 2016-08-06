@@ -1,0 +1,3 @@
+---
+- name: restart fpm
+  service: name={{ php_mod_prefix }}fpm state=restarted

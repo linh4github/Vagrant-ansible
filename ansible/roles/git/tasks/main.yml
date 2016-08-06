@@ -1,0 +1,8 @@
+---
+- name: Setup main repository
+  sudo: false
+  git:  repo={{ item.src }}
+        dest={{ item.dest }}
+        update=no
+        accept_hostkey=yes
+  with_items: "{{ repositories }}"
